@@ -3,6 +3,13 @@
 set -eu
 
 _main() {
+    if [ -n "$INPUT_BRANCH" ]
+    then
+       BRANCH=$BRANCH
+    else
+       BRANCH=$(echo "$GITHUB_REF" | sed "s/refs\/heads\///")
+    fi
+
     _switch_to_repository
 
     if _git_is_dirty; then
@@ -45,10 +52,10 @@ _setup_git ( ) {
 }
 
 _switch_to_branch() {
-    echo "INPUT_BRANCH value: $INPUT_BRANCH";
+    echo "BRANCH value: $BRANCH";
 
     # Switch to branch from current Workflow run
-    git checkout $INPUT_BRANCH
+    git checkout $BRANCH
 }
 
 _add_files() {
@@ -73,7 +80,7 @@ _tag_commit() {
 }
 
 _push_to_github() {
-    if [ -z "$INPUT_BRANCH" ]
+    if [ -z "$BRANCH" ]
     then
         # Only add `--tags` option, if `$INPUT_TAGGING_MESSAGE` is set
         if [ -n "$INPUT_TAGGING_MESSAGE" ]
@@ -84,7 +91,7 @@ _push_to_github() {
         fi
 
     else
-        git push --set-upstream origin "HEAD:$INPUT_BRANCH" --tags
+        git push --set-upstream origin "HEAD:$BRANCH" --tags
     fi
 }
 
