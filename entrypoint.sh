@@ -5,7 +5,7 @@ set -eu
 _main() {
     if [ -n "$INPUT_BRANCH" ]
     then
-       BRANCH=$BRANCH
+       BRANCH=$INPUT_BRANCH
     else
        BRANCH=$(echo "$GITHUB_REF" | sed "s/refs\/heads\///")
     fi
