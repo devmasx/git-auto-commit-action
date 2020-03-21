@@ -1,6 +1,6 @@
 def git_is_dirty
   result = `git status -s`
-  puts result
+  puts result.empty? ? "si" : "no"
 end
 
 git_is_dirty
