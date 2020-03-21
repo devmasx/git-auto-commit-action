@@ -1,31 +1,33 @@
 def git_dirty?
   result = `git status -s`
-  puts !result.empty? ? "si" : "no"
+  !result.empty?
 end
 
-git_dirty?
-# # switch_to_repository
-# echo "INPUT_REPOSITORY value: $INPUT_REPOSITORY";
-# cd $INPUT_REPOSITORY
+# git_dirty?
+repository = ENV.fetch("INPUT_REPOSITORY", ".")
+file_pattern = ENV.fetch("INPUT_FILE_PATTERN", ".")
+commit_message = ENV.fetch("INPUT_COMMIT_MESSAGE", "Auto commit")
 
-# if _git_is_dirty; then
-#     BRANCH=$(echo "$GITHUB_REF" | sed "s/refs\/heads\///")
+github_actor = ENV.fetch("GITHUB_ACTOR", "")
+github_token = ENV.fetch("GITHUB_TOKEN", "")
+branch = ENV.fetch("INPUT_BRANCH", nil) ? ENV["INPUT_BRANCH"] : ENV["GITHUB_REF"].gsub("refs/heads/", "")
 
-#     # Set up .netrc file with GitHub credentials
-#     cat <<- EOF > $HOME/.netrc
-#         machine github.com
-#         login $GITHUB_ACTOR
-#         password $GITHUB_TOKEN
-# EOF
-#     chmod 600 $HOME/.netrc
-#     git config --global user.email "actions@github.com"
-#     git config --global user.name "GitHub Actions"
+def github_auth
+  File.open("#{ENV["HOME"]}/.netrc", "a") do |f|
+    f << "
+machine github.com
+  login #{github_actor}
+  password #{github_token}
 
-#     git checkout $BRANCH
-#     git add "${INPUT_FILE_PATTERN}"
-#     git commit -m "$INPUT_COMMIT_MESSAGE" \
-#     --author="$GITHUB_ACTOR <$GITHUB_ACTOR@users.noreply.github.com>" ${INPUT_COMMIT_OPTIONS:+"$INPUT_COMMIT_OPTIONS"}
-#     git push --set-upstream origin "HEAD:$BRANCH"
-# else
-#     echo "Working tree clean. Nothing to commit."
-# fi
+machine github.com
+  login #{github_actor}
+  password #{github_token}
+"
+  end
+  `git config --global user.email "actions@github.com"`
+  `git config --global user.name "GitHub Actions"`
+end
+
+`git add #{file_pattern}`
+`git commit -m #{commit_message}`
+`git push --set-upstream origin "HEAD:#{branch}"`
