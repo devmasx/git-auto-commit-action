@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BRANCH=$(echo "$GITHUB_REF" | sed "s/refs\/heads\///")
+
 _switch_to_repository() {
     echo "INPUT_REPOSITORY value: $INPUT_REPOSITORY";
     cd $INPUT_REPOSITORY
@@ -27,10 +29,10 @@ EOF
 }
 
 _switch_to_branch() {
-    echo "INPUT_BRANCH value: $INPUT_BRANCH";
+    echo "BRANCH value: $BRANCH";
 
     # Switch to branch from current Workflow run
-    git checkout $INPUT_BRANCH
+    git checkout $BRANCH
 }
 
 _add_files() {
@@ -44,5 +46,5 @@ _local_commit() {
 }
 
 _push_to_github() {
-    git push --set-upstream origin "HEAD:$INPUT_BRANCH"
+    git push --set-upstream origin "HEAD:$BRANCH"
 }
