@@ -1,9 +1,9 @@
-def git_is_dirty
+def git_dirty?
   result = `git status -s`
-  puts result.empty? ? "si" : "no"
+  puts !result.empty? ? "si" : "no"
 end
 
-git_is_dirty
+git_dirty?
 # # switch_to_repository
 # echo "INPUT_REPOSITORY value: $INPUT_REPOSITORY";
 # cd $INPUT_REPOSITORY
