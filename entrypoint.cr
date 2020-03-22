@@ -42,6 +42,7 @@ machine github.com
   end
 
   def auto_commit
+    puts "Auto commit run #{App.git_dirty?}"
     if App.git_dirty?
       github_auth
       `git add #{@file_pattern}`
