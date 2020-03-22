@@ -29,9 +29,7 @@ machine github.com
 end
 
 if git_dirty?
-  puts file_pattern
-  puts commit_message
-  puts branch
+  github_auth
   `git add #{file_pattern}`
   `git commit -am "#{commit_message}"`
   `git push --set-upstream origin "HEAD:#{branch}"`
