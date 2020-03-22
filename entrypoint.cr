@@ -30,18 +30,22 @@ class App
     end
   end
 
-  def github_auth
+  def write_auth_file
     File.open("#{ENV["HOME"]}/.netrc", "a") do |f|
       f << "
 machine github.com
-  login #{@github_actor}
-  password #{@github_token}
+login #{@github_actor}
+password #{@github_token}
 
 machine github.com
-  login #{@github_actor}
-  password #{@github_token}
-  "
+login #{@github_actor}
+password #{@github_token}
+"
     end
+  end
+
+  def github_auth
+    write_auth_file
     `git config --global user.email "actions@github.com"`
     `git config --global user.name "GitHub Actions"`
   end
