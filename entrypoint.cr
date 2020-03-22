@@ -28,6 +28,11 @@ machine github.com
   `git config --global user.name "GitHub Actions"`
 end
 
-`git add #{file_pattern}`
-`git commit -m #{commit_message}`
-`git push --set-upstream origin "HEAD:#{branch}"`
+if git_dirty?
+  puts file_pattern
+  puts commit_message
+  puts branch
+  `git add #{file_pattern}`
+  `git commit -am "#{commit_message}"`
+  `git push --set-upstream origin "HEAD:#{branch}"`
+end
