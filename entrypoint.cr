@@ -22,7 +22,12 @@ class App
   end
 
   def set_brach
-    ENV.fetch("INPUT_BRANCH", nil) ? ENV["INPUT_BRANCH"] : ENV["GITHUB_REF"].gsub("refs/heads/", "")
+    branch = ENV.fetch("INPUT_BRANCH", "")
+    if branch == ""
+      ENV["GITHUB_REF"].gsub("refs/heads/", "")
+    else
+      branch
+    end
   end
 
   def github_auth
@@ -42,7 +47,7 @@ machine github.com
   end
 
   def auto_commit
-    puts "Auto commit run #{App.git_dirty?}"
+    puts "Auto commit run #{App.git_dirty?} branch: #{@branch}"
     if App.git_dirty?
       github_auth
       `git add #{@file_pattern}`
